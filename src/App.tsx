@@ -191,8 +191,10 @@ function App() {
                 onClick={parseWiki}
                 disabled={
                   isLoading ||
-                  input.replace(/[^A-Za-z]/g, "").replace(/(.)\1+/g, "$1")
-                    .length < 2
+                  input
+                    .toLowerCase()
+                    .replace(/[^A-Za-z]/g, "")
+                    .replace(/(.)\1+/g, "$1").length < 2
                 }
               >
                 {isLoading ? (
