@@ -69,11 +69,14 @@ function App() {
   const parseWiki = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("http://localhost:8000/api/proxy", {
-        params: {
-          url: url,
-        },
-      });
+      const response = await axios.get(
+        "https://parser-app-4v2t.onrender.com/api/proxy",
+        {
+          params: {
+            url: url,
+          },
+        }
+      );
       setUserString(input);
       setUrlRemember(url);
 

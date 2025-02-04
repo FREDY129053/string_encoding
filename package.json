@@ -1,12 +1,12 @@
 {
   "name": "cryptography_web_app",
   "private": true,
-  "homepage": "https://FREDY129053.github.io/cryptography_web_app",
+  "homepage": "https://fredy129053.github.io/string_encoding",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
