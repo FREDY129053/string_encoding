@@ -28,6 +28,9 @@ const MainTableView: React.FC<MainTableProps> = ({
   ): number => {
     let sumForEntropy = 0;
     for (const [, freq] of Object.entries(symbolsAndFreqs)) {
+      console.log(
+        `Entropy = ${sumForEntropy} | To add = ${freq * Math.log2(freq)}`
+      );
       sumForEntropy += freq * Math.log2(freq);
     }
 
