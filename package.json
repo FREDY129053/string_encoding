@@ -1,7 +1,7 @@
 {
   "name": "cryptography_web_app",
   "private": true,
-  "homepage": "https://fredy129053.github.io/string_encoding",
+  "homepage": "https://fredy129053.github.io/string_encoding/",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
