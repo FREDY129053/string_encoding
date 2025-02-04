@@ -14,7 +14,7 @@ const parseAnswer = (answer: string): JSX.Element => {
             href={part}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
+            className="text-blue-500 hover:underline break-words whitespace-normal"
           >
             {part}
           </a>
