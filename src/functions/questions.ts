@@ -24,6 +24,6 @@ export default [
   {
     question: "Where can I see the source code of the parser?",
     answer:
-      "It is available on GitHub at the link: https://github.com/FREDY129053/Cryptography/blob/main/parser_python/parser.py",
+      "It is available on GitHub at the link: https://github.com/FREDY129053/parser_app",
   },
 ];
