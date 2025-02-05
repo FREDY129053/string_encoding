@@ -26,4 +26,9 @@ export default [
     answer:
       "It is available on GitHub at the link: https://github.com/FREDY129053/parser_app",
   },
+  {
+    question: "How did you manage to write a website and make it accessible to everyone?",
+    answer:
+      "Pretty easy. The recommendations in choosing drinks from the Telegram channel helped: https://t.me/true_chaek2",
+  },
 ];
