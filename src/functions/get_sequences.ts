@@ -2,6 +2,9 @@ export function generateCombinations(
   dataDict: Record<string, number>,
   combCount: number
 ): Record<string, number> {
+  if (combCount > 5) {
+    combCount = 5
+  }
   const keys = Object.keys(dataDict);
   const combDict: Record<string, number> = {};
 
