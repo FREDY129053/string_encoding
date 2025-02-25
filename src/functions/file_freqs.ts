@@ -23,7 +23,7 @@ export async function getDocxFreqs(
     th: text.match(/th[^e]/g)?.length,
     tion: text.match(/tion/g)?.length,
     ing: text.match(/ing/g)?.length,
-    ed: text.match(/ed/g)?.length,
+    ed: text.match(/[^r]ed/g)?.length,
     re: text.match(/[^a]re/g)?.length,
     are: text.match(/are/g)?.length,
     is: text.match(/is/g)?.length,
