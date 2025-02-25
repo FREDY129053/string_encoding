@@ -1,4 +1,4 @@
-import questions from "./functions/questions";
+import questions from "./functions/helpers/questions";
 
 const parseAnswer = (answer: string): JSX.Element => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;

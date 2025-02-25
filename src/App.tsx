@@ -1,13 +1,14 @@
 import { huffmanCodeTree, prepareNodes } from "./functions/algorithms/haffman";
 import shannonFanoSteps from "./functions/algorithms/shannon_fano";
-// import ShannonFanoTable from "./ShannonFanoVisual";
-// import HuffmanVisual2 from "./HaffmanVisual2";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import getInputFrequencies from "./functions/input_freqs";
 import MainTableView from "./MainTableView";
 import MethodExplanation from "./MethodExplanation";
 import FAQSection from "./FAQSection";
+import { getDocxFreqs } from "./functions/file_freqs";
+import ProbabilityInput from "./ProbaInput";
+import {generateCombinations} from "./functions/get_sequences";
 
 const codeString = (str: string, codesDict: Record<string, string>): string => {
   let result = "";
@@ -26,6 +27,8 @@ const codeString = (str: string, codesDict: Record<string, string>): string => {
 };
 
 function App() {
+  const [docxFreqs, setDocxFreqs] = useState<Record<string, number>>({});
+
   const [url, setUrl] = useState("");
   const [input, setInput] = useState("");
   const [userString, setUserString] = useState("");
@@ -35,7 +38,11 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isStartCrypto, setIsStartCrypto] = useState(false);
-  const [isError, setError] = useState(false);
+  const [isError1, setError1] = useState(false);
+
+  useEffect(() => {
+    getDocxFreqs("teskt_dlya_3_zadachi.docx").then(setDocxFreqs);
+  }, []);
 
   const englishLettersFreq = {
     E: 0.127,
@@ -84,21 +91,70 @@ function App() {
       setUrl("");
       setIsStartCrypto(true);
       setInput("");
-      setError(false);
+      setError1(false);
+
+      setIsCalculateI(false);
     } catch (err) {
       console.error("Error parsing Wikipedia:", err);
-      setError(true);
+      setError1(true);
       setUrl("");
     } finally {
       setIsLoading(false);
+
+      if (!error && remaining === 0) {
+        setProbabilitiesMem(probabilities);
+        setIsCalculateI(true);
+        
+        setSeqLenMem(seqLen)
+        setSeqLen("");
+        setProbabilities({});
+        setError(null);
+        setRemaining(1);
+        setIsOpenI(false);
+      }
     }
   };
 
+  // ProbaInput states
+  const [isOpenI, setIsOpenI] = useState(false);
+  const [isCalculateI, setIsCalculateI] = useState(false);
+  const toggleSectionI = () => setIsOpenI(!isOpenI);
+
+  const [seqLen, setSeqLen] = useState<number | "">("");
+  const [seqLenMem, setSeqLenMem] = useState<number | "">("");
+  const [probabilities, setProbabilities] = useState<Record<string, number>>(
+    {}
+  );
+  const [probabilitiesMem, setProbabilitiesMem] = useState<
+    Record<string, number>
+  >({});
+  const [error, setError] = useState<string | null>(null);
+  const [remaining, setRemaining] = useState<number>(1);
+
+  const handleProbabilitiesUpdate = (
+    updatedProbabilities: Record<string, number>
+  ) => {
+    const total = Object.values(updatedProbabilities).reduce(
+      (acc, cur) => acc + cur,
+      0
+    );
+    setProbabilities(updatedProbabilities);
+    setRemaining(1 - total);
+    setError(
+      total > 1 ? "The sum of the probabilities cannot be more than 1" : null
+    );
+  };
+
+  // Other
   const isFirstMethodAvailable = isStartCrypto;
   const isSecondMethodAvailable = isStartCrypto;
   const isThirdMethodAvailable = Object.keys(wikiFreqs).length > 0;
 
   const inputFreqs = getInputFrequencies(userString);
+  const inputLetters = isCalculateI
+    ? generateCombinations(probabilitiesMem, +seqLenMem)
+    : {};
+
   const wikiFrequencies = isThirdMethodAvailable ? wikiFreqs : {};
 
   // Первый метод: кодирование строки с вероятностями из самой строки
@@ -177,7 +233,7 @@ function App() {
                 >
                   Link to the English Wiki article
                 </label>
-                {isError && (
+                {isError1 && (
                   <p className="text-sm text-red-600">
                     Enter the correct link or don't enter anything!
                   </p>
@@ -190,10 +246,15 @@ function App() {
                 className="border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 m-2 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-500"
                 onClick={parseWiki}
                 disabled={
+                  (isOpenI &&
+                    (!!error ||
+                      remaining > 0 ||
+                      seqLen === "" ||
+                      seqLen === 0)) ||
                   isLoading ||
                   input
                     .toLowerCase()
-                    .replace(/[^A-Za-z]/g, "")
+                    .replace(/[^ A-Za-z]/g, "")
                     .replace(/(.)\1+/g, "$1").length < 2
                 }
               >
@@ -229,6 +290,44 @@ function App() {
             </div>
           </div>
         </div>
+
+        <div className="bg-white border border-gray-400 rounded-lg shadow-md p-6 mx-4 mt-6 mb-6">
+          <div
+            className="flex items-center justify-between cursor-pointer transition delay-700 duration-300 ease-in-out"
+            onClick={toggleSectionI}
+          >
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Enter the sequence length and letter probabilities for Method I
+            </h2>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`w-[24px] h-[24px] flex-shrink-0 transition-transform duration-300 ${
+                isOpenI ? "transform rotate-45" : ""
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          {isOpenI && (
+            <ProbabilityInput
+              seqLen={seqLen}
+              setSeqLen={setSeqLen}
+              probabilities={probabilities}
+              setProbabilities={handleProbabilitiesUpdate}
+              error={error}
+              remaining={remaining}
+            />
+          )}
+        </div>
+
         {isStartCrypto && (
           <>
             <div className="mx-4 p-6 bg-white rounded-lg shadow-md mb-10">
@@ -238,7 +337,7 @@ function App() {
 
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
-                  Method I:
+                  Method II:
                 </h3>
                 <ul className="list-disc list-inside text-gray-600">
                   <li>
@@ -258,7 +357,7 @@ function App() {
 
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
-                  Method II:
+                  Method IV:
                 </h3>
                 <ul className="list-disc list-inside text-gray-600">
                   <li>
@@ -278,7 +377,7 @@ function App() {
 
               <div>
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
-                  Method III:
+                  Method V:
                 </h3>
                 <ul className="list-disc list-inside text-gray-600">
                   <li>
@@ -307,13 +406,27 @@ function App() {
               symbolsAndFanoCodesIII={thirdFanoCodes}
               symbolsAndHuffmanCodesIII={thirdHuffmanCodes}
             />
-            <MethodExplanation method={1} symbolsAndFreqs={inputFreqs} />
+
+            {isCalculateI && (
+              <MethodExplanation
+                method={1}
+                symbolsAndFreqs={Object.fromEntries(
+                  Object.entries(inputLetters).sort((a, b) => b[1] - a[1])
+                )}
+              />
+            )}
+
+            <MethodExplanation method={2} symbolsAndFreqs={inputFreqs} />
+
+            <MethodExplanation method={3} symbolsAndFreqs={docxFreqs} />
+
             <MethodExplanation
-              method={2}
+              method={4}
               symbolsAndFreqs={englishLettersFreq}
             />
+
             <MethodExplanation
-              method={3}
+              method={5}
               symbolsAndFreqs={wikiFreqs}
               wikiName={wikiArticleName}
             />

@@ -102,19 +102,19 @@ const MainTableView: React.FC<MainTableProps> = ({
                 colSpan={2}
                 className="py-2 px-6 text-center border-solid border border-gray-300"
               >
-                Method I
-              </th>
-              <th
-                colSpan={2}
-                className="py-2 px-6 text-center border-solid border border-gray-300"
-              >
                 Method II
               </th>
               <th
                 colSpan={2}
                 className="py-2 px-6 text-center border-solid border border-gray-300"
               >
-                Method III
+                Method IV
+              </th>
+              <th
+                colSpan={2}
+                className="py-2 px-6 text-center border-solid border border-gray-300"
+              >
+                Method V
               </th>
             </tr>
             <tr>
@@ -165,6 +165,28 @@ const MainTableView: React.FC<MainTableProps> = ({
                 </td>
               </tr>
             ))}
+
+            {Object.prototype.hasOwnProperty.call(
+              symbolsAndFreqsInput,
+              " "
+            ) && (
+              <tr key={999999}>
+                <td className="sticky left-0 bg-gray-100 py-2 px-6 text-center border border-gray-300 font-bold">
+                  {"_"}
+                </td>
+                <td className="py-2 px-6 text-center border border-gray-300 bg-white">
+                  {symbolsAndFanoCodesI[" "]}
+                </td>
+                <td className="py-2 px-6 text-center border border-gray-300 bg-white">
+                  {symbolsAndHuffmanCodesI[" "]}
+                </td>
+                <td className="py-2 px-6 text-center border border-gray-300 bg-white"></td>
+                <td className="py-2 px-6 text-center border border-gray-300 bg-white"></td>
+                <td className="py-2 px-6 text-center border border-gray-300 bg-white"></td>
+                <td className="py-2 px-6 text-center border border-gray-300 bg-white"></td>
+              </tr>
+            )}
+
             <tr>
               <td className="sticky left-0 bg-gray-100 py-2 px-6 text-center border border-gray-300 font-bold">
                 Entropy

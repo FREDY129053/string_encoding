@@ -15,7 +15,9 @@ export class NodeTree {
   }
 
   toString(): string {
-    return `${this.left}+${this.right}`;
+    return `${this.left === " " ? "_" : this.left}+${
+      this.right === " " ? "_" : this.right
+    }`;
   }
 }
 

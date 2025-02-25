@@ -2,7 +2,7 @@ export default function getInputFrequencies(
   inputStr: string
 ): Record<string, number> {
   const frequencies: Record<string, number> = {};
-  const goodInputStr = inputStr.replace(/[^A-Za-z]/g, "").toUpperCase();
+  const goodInputStr = inputStr.replace(/[^ A-Za-z]/g, "").toUpperCase();
   const inputStrLength = goodInputStr.length;
 
   for (const char of goodInputStr) {

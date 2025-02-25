@@ -192,8 +192,8 @@ const ShannonFanoTable: React.FC<TableProps> = ({ steps, data, codes }) => {
           <tbody>
             {mergedTable.map((row, rowIndex) => (
               <tr key={rowIndex}>
-                <td className="sticky left-0 bg-gray-100 py-2 px-6 text-center border border-gray-300 bg-gray-100 font-bold">
-                  {symbols[rowIndex]}
+                <td className="sticky left-0 bg-gray-100 py-2 px-6 text-center border border-gray-300 font-bold">
+                  {symbols[rowIndex] === " " || symbols[rowIndex] === "" ? "_" : symbols[rowIndex]}
                 </td>
                 <td className="py-2 px-6 text-center border border-gray-300">
                   {data[symbols[rowIndex]]}

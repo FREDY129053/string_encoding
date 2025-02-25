@@ -81,7 +81,9 @@ const HuffmanVisual2: React.FC<{ rootNode: NodeTree | null }> = ({
                     fill="#333" // Цвет текста
                     fontSize={18} // Размер текста
                   >
-                    {nodeDatum.name} {/* Текст из данных узла */}
+                    {nodeDatum.name === " " || nodeDatum.name === ""
+                      ? "_"
+                      : nodeDatum.name}
                   </text>
                 )}
                 {/* Текст над узлом (если это не лист) */}
