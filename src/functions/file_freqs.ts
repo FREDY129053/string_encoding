@@ -20,10 +20,10 @@ export async function getDocxFreqs(
   const text = (await readDocxFile(fileName)).toLowerCase();
 
   const seqMap: Record<string, number | undefined> = {
-    th: text.match(/th[^e]/g)?.length,
+    th: text.match(/th[^e]/g)?.length,  // the
     tion: text.match(/tion/g)?.length,
     ing: text.match(/ing/g)?.length,
-    ed: text.match(/[^r]ed/g)?.length,
+    ed: text.match(/[^r]ed/g)?.length,  // compARED
     re: text.match(/[^a]re/g)?.length,
     are: text.match(/are/g)?.length,
     is: text.match(/is/g)?.length,
