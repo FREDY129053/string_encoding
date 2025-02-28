@@ -29,16 +29,16 @@ const codeString = (str: string, codesDict: Record<string, string>): string => {
 function App() {
   const [docxFreqs, setDocxFreqs] = useState<Record<string, number>>({});
 
-  const [url, setUrl] = useState("");
-  const [input, setInput] = useState("");
-  const [userString, setUserString] = useState("");
-  const [urlRemember, setUrlRemember] = useState("");
+  const [url, setUrl] = useState<string>("");
+  const [input, setInput] = useState<string>("");
+  const [userString, setUserString] = useState<string>("");
+  const [urlRemember, setUrlRemember] = useState<string>("");
 
   const [wikiFreqs, setWikiFreqs] = useState({});
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isStartCrypto, setIsStartCrypto] = useState(false);
-  const [isError1, setError1] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isStartCrypto, setIsStartCrypto] = useState<boolean>(false);
+  const [isError1, setError1] = useState<boolean>(false);
 
   useEffect(() => {
     getDocxFreqs("teskt_dlya_3_zadachi.docx").then(setDocxFreqs);
