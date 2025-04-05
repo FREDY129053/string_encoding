@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/string_encoding" element={<FirstHWApp />} />
         <Route path="/ciphers" element={<CiphersHWApp />} />
-        <Route path="*" element={<NotFoundPage />} /> {/* Страница 404 */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   </StrictMode>,
