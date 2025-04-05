@@ -26,7 +26,7 @@ const codeString = (str: string, codesDict: Record<string, string>): string => {
     .trim();
 };
 
-function App() {
+function FirstHWApp() {
   const [docxFreqs, setDocxFreqs] = useState<Record<string, number>>({});
 
   const [url, setUrl] = useState<string>("");
@@ -438,4 +438,4 @@ function App() {
   );
 }
 
-export default App;
+export default FirstHWApp;
