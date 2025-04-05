@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import FirstHWApp from './Huffman_Fano_HW/App';
 import CiphersHWApp from './Ciphers_HW/App';
 import NotFoundPage from './404';
