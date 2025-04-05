@@ -5,6 +5,200 @@ import { cipher_playfair, get_matrix } from "./ciphers/playfair";
 import { cipher_hill } from "./ciphers/hill";
 import { cipher_autokey } from "./ciphers/autokey";
 import { cipher_autoclave } from "./ciphers/autoclave";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+const pythonCodeExamples = {
+  "Виженер": `
+def cipher_vigenere(message: str, keyword: str, is_ru: bool = True) -> str:
+  """Реализация шифра Виженера для русского и английского языков.
+
+  Args:
+      message (str): текст сообщения
+      keyword (str): ключевое слово
+      is_ru (bool, optional): переключение алфавита. Defaults to True.
+
+  Returns:
+      str: шифртекст
+  """
+  message, keyword = message.lower(), keyword.lower()
+  alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя' if is_ru else 'abcdefghijklmnopqrstuvwxyz'
+  n = len(alphabet)
+  key = "".join([keyword[i % len(keyword)] for i in range(len(message))])
+  
+  return "".join([alphabet[(alphabet.index(message[i]) + alphabet.index(key[i])) % n] for i in range(len(message))])
+  `,
+
+  "Вернам": `
+def cipher_vernam(message: str, key: str, is_ru: bool = True) -> str:
+  """Реализация шифра Вернама для русского и английского языков. 
+  Шифр Виженера с использованием XOR.
+
+  Args:
+      message (str): сообщение
+      key (str): ключевое слово
+      is_ru (bool, optional): переключение алфавита. Defaults to True.
+
+  Returns:
+      str: шифртекст
+  """
+  message, key = message.lower(), key.lower()
+  alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя' if is_ru else 'abcdefghijklmnopqrstuvwxyz'
+  n = len(alphabet)
+  final_key = "".join([key[i % len(key)] for i in range(len(message))])
+
+  return "".join([alphabet[(alphabet.index(message[i]) ^ alphabet.index(final_key[i])) % n] for i in range(len(message))])
+  `,
+
+  "Плейфер": `
+def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
+  """Реализация шифра Плейфера для русского и английского языков.
+  Матрица ключа создается из ключевого слова и алфавита.
+  Если в биграмме одинаковые буквы, то добавляется буква 'ъ' или 'x'.
+  Если в биграмме одна буква, то добавляется буква 'ъ' или 'x'.
+
+  Args:
+      message (str): сообщение
+      keyword (str): ключевое слово для построения матрицы ключа
+      is_ru (bool, optional): переключение алфавита. Defaults to True.
+
+  Returns:
+      str: шифртекст
+  """
+  message, keyword = message.lower(), keyword.lower()
+  # В моей реализации все буквы каждого алфавита
+  alphabet, matrix_size = ('абвгдеёжзийклмнопрстуфхцчшщъыьэюя', 8) if is_ru else ('abcdefghijklmnopqrstuvwxyz', 5)
+  letter = 'ъ' if is_ru else 'x'
+
+  key = "".join(dict.fromkeys(keyword + alphabet))  # Убираем дубликаты из алфавита
+  matrix = [list(key[i:i+matrix_size]) for i in range(0, len(key), matrix_size)]  # Матрица для поисков
+
+  # Разбитие текста на биграммы
+  bigramm_message = [message[i:i+2] for i in range(0, len(message), 2)]
+  prepare_message = []
+  temp = ""  # Если у биграммы одинаковые символы, то последний запоминаем для следующего элемента
+  for bigramm in bigramm_message:
+    if temp:
+      prepare_message.append(temp + bigramm[0])
+      temp = ""
+    elif len(bigramm) == 1:
+      prepare_message.append(bigramm + letter)
+    elif bigramm[0] == bigramm[1]:
+      prepare_message.append(bigramm[0] + letter)
+      temp = bigramm[1]
+    else:
+      prepare_message.append(bigramm)
+
+  # Шифрование текста
+  encrypted_message = []
+  for a, b in prepare_message:
+    row_a, col_a = _find_letter_position_in_matrix(matrix, a)
+    row_b, col_b = _find_letter_position_in_matrix(matrix, b)
+
+    if row_a == row_b:
+      encrypted_message.append(matrix[row_a][(col_a + 1) % matrix_size] + matrix[row_b][(col_b + 1) % matrix_size])
+    elif col_a == col_b:
+      encrypted_message.append(matrix[(row_a + 1) % matrix_size][col_a] + matrix[(row_b + 1) % matrix_size][col_b])
+    else:
+      if len(matrix[row_a]) == 1:
+        encrypted_message.append(matrix[0][col_b] + matrix[row_b][col_a])
+      else:
+        encrypted_message.append(matrix[row_a][col_b] + matrix[row_b][col_a])
+
+  
+  return "".join(encrypted_message)
+
+def _find_letter_position_in_matrix(matrix: list[list[str]], letter: str) -> tuple[int, int]:
+  """Функция поиска строки и колонки буквы в матрице.
+  Если буквы нет, то возвращает -1, -1.
+
+  Args:
+      matrix (list[list[str]]): матрица букв
+      letter (str): буква, которую нужно найти
+
+  Returns:
+      tuple[int, int]: строка и столбец буквы
+  """
+  for i, row in enumerate(matrix):
+    for j, el in enumerate(row):
+      if el == letter:
+        return i, j
+  return -1, -1
+  `,
+
+  "Хилл": `
+import numpy as np
+
+def cipher_hill(message: str, keyword: str, is_ru: bool = True) -> str:
+  """Реализация шифра Хилла для русского и английского языков.
+  Матрица ключа создается из ключевого слова размеров n x n, где n - длина сообщения.
+  Шифрование происходит путем умножения матрицы ключа на матрицу сообщения.
+
+  Args:
+      message (str): сообщение
+      keyword (str): клбчевое слово для построения матрицы ключа
+      is_ru (bool, optional): переключение алфавита. Defaults to True.
+
+  Returns:
+      str: шифртекст
+  """
+  message, keyword = message.lower(), keyword.lower()
+  alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя' if is_ru else 'abcdefghijklmnopqrstuvwxyz'
+  n = len(message)
+
+  key = [alphabet.index(keyword[i % len(keyword)]) for i in range(n**2)]
+  key_matrix = np.array(key).reshape(n, n)
+  message_matrix = np.array([alphabet.index(i) for i in message]).reshape(n, 1)
+  result_multiply_matrix = (key_matrix.dot(message_matrix) % np.array([len(alphabet) for _ in range(n)]).reshape(n, 1)).reshape(1, n)
+
+  return "".join([alphabet[i] for i in result_multiply_matrix[0]])
+  `,
+
+  "Автоклав": `
+def cipher_autoclave(message: str, is_ru: bool = True) -> str:
+  """Реализация автоклавного шифра для русского и английского языков.
+  Шифрование происходит путем сложения двух соседних букв.
+  Если буква последняя, то она складывается с первой.
+
+  Args:
+      message (str): сообщение
+      is_ru (bool, optional): переключение алфавита. Defaults to True.
+
+  Returns:
+      str: шифртекст
+  """
+  message = message.lower()
+  alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя' if is_ru else 'abcdefghijklmnopqrstuvwxyz'
+  n = len(alphabet)
+
+  key = "".join([alphabet[(alphabet.index(message[i]) + alphabet.index(message[i + 1])) % n] for i in range(len(message) - 1)])
+  key += alphabet[(alphabet.index(message[-1]) + alphabet.index(message[0])) % n]  # Учитываем последний символ
+  
+  return "".join([alphabet[(alphabet.index(message[i]) + alphabet.index(key[i])) % n] for i in range(len(message))])
+  `,
+
+  "Автоключ": `
+def cipher_autokey(message: str, keyword: str, is_ru: bool = True) -> str:
+  """Реализация шифра с автоключом для русского и английского языков.
+  Шифрование просиходит путем добавления ключа к сообщению.
+
+  Args:
+      message (str): сообщение
+      keyword (str): ключевое слово
+      is_ru (bool, optional): переключение алфавита. Defaults to True.
+
+  Returns:
+      str: шифртекст
+  """
+  message, keyword = message.lower(), keyword.lower()
+  alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя' if is_ru else 'abcdefghijklmnopqrstuvwxyz'
+  n = len(alphabet)
+
+  key = (keyword + message)[:len(message)]
+  
+  return "".join([alphabet[(alphabet.index(message[i]) + alphabet.index(key[i])) % n] for i in range(len(message))])
+  `,
+};
 
 const CiphersHWApp: React.FC = () => {
   const [message, setMessage] = useState("");
@@ -168,6 +362,22 @@ const CiphersHWApp: React.FC = () => {
           ) : (
             <p className="text-gray-500 text-lg">Выберите алгоритмы и нажмите "Зашифровать".</p>
           )}
+        </div>
+
+        <div className="mt-10">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Код на Python:</h2>
+          {Object.entries(pythonCodeExamples).map(([algorithm, code]) => (
+            <details key={algorithm} className="mb-4">
+              <summary className="cursor-pointer text-lg font-semibold text-blue-600 hover:underline">
+                {algorithm}
+              </summary>
+              <div className="mt-2">
+                <SyntaxHighlighter language="python" style={materialDark}>
+                  {code.trim()}
+                </SyntaxHighlighter>
+              </div>
+            </details>
+          ))}
         </div>
       </div>
     </div>
