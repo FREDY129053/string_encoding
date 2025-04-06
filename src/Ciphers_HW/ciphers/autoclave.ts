@@ -10,7 +10,7 @@ export function cipher_autoclave(message: string) : string {
     key += alphabet[cipherChar];
   }
   key += alphabet[(alphabet.indexOf(message[message.length - 1]) + alphabet.indexOf(message[0])) % alphabetLength];
-  console.log(key)
+ 
   let result = "";
   for (let i = 0; i < message.length; i++) {
     const cipherChar =

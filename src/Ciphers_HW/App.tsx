@@ -246,18 +246,17 @@ const CiphersHWApp: React.FC = () => {
       const algorithm = algorithms.find((alg) => alg.name === algorithmName);
       if (algorithm) {
         try {
-          // TODO: задеплоить LowerCase
           const result =
             algorithm.name === "Автоключ"
               ? algorithm.func(
                   message.toLowerCase(),
-                  autokeyKeyword!.toLowerCase() || "привет"
+                  (autokeyKeyword || "ПРИВЕТ").toLowerCase()
                 )
               : algorithm.func(message.toLowerCase(), key.toLowerCase());
 
           // Добавляем матрицу для шифра Плейфера
           if (algorithm.name === "Плейфер") {
-            const matrix = get_matrix(key);
+            const matrix = get_matrix(key.toLocaleLowerCase());
             return { algorithm: algorithm.name, result, matrix };
           }
 
@@ -316,7 +315,7 @@ const CiphersHWApp: React.FC = () => {
                 handleInputChange(e.target.value, setAutokeyKeyword)
               }
               className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Задано слово: привет"
+              placeholder="Задано слово: ПРИВЕТ"
             />
           </div>
         )}
