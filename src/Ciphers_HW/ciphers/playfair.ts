@@ -10,23 +10,20 @@ export function cipher_playfair(message: string, keyword: string): string {
     matrix.push(key.slice(i, i + matrix_cols).split(""));
   }
 
-  const bigramms: string[] = [];
-  for (let i = 0; i < message.length; i += 2) {
-    bigramms.push(message.slice(i, i + 2));
-  }
+  
   const bigramms_fixed: string[] = [];
-  let temp = "";
-  for (const bigramm of bigramms) {
-    if (temp) {
-      bigramms_fixed.push(temp + bigramm[0]);
-      temp = "";
-    } else if (bigramm.length === 1) {
-      bigramms_fixed.push(bigramm + temp_letter);
-    } else if (bigramm[0] === bigramm[1]) {
-      bigramms_fixed.push(bigramm[0] + temp_letter);
-      temp = bigramm[1];
+  let iter = 0;
+
+  while (iter < message.length) {
+    if (iter === message.length - 1) {
+      bigramms_fixed.push(message[iter] + temp_letter);
+      iter += 1;
+    } else if (message[iter] === message[iter + 1]) {
+      bigramms_fixed.push(message[iter] + temp_letter);
+      iter += 1;
     } else {
-      bigramms_fixed.push(bigramm);
+      bigramms_fixed.push(message.slice(iter, iter + 2))
+      iter += 2;
     }
   }
 
@@ -41,12 +38,27 @@ export function cipher_playfair(message: string, keyword: string): string {
         matrix[rowA][(colA + 1) % matrix_cols] +
         matrix[rowB][(colB + 1) % matrix_cols];
     } else if (colA === colB) {
-      result +=
-        matrix[(rowA + 1) % matrix.length][colA] +
-        matrix[(rowB + 1) % matrix.length][colB];
+      if (colB !== 0) {
+        if (rowA + 1 === matrix.length - 1) {
+          result +=
+            matrix[(rowA + 2) % matrix.length][colA] +
+            matrix[(rowB + 1) % matrix.length][colB];
+        } else if (rowB + 1 === matrix.length - 1) {
+          result +=
+            matrix[(rowA + 1) % matrix.length][colA] +
+            matrix[(rowB + 2) % matrix.length][colB];
+        }
+      } else {
+        result +=
+          matrix[(rowA + 1) % matrix.length][colA] +
+          matrix[(rowB + 1) % matrix.length][colB];
+}
+
     } else {
       if (matrix[rowA].length === 1) {
         result += matrix[0][colB] + matrix[rowB][colA];
+      } else if (matrix[rowB].length === 1) {
+        result += matrix[rowA][colB] + matrix[0][colA];
       } else {
         result += matrix[rowA][colB] + matrix[rowB][colA];
       }

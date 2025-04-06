@@ -9,7 +9,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const pythonCodeExamples = {
-  "Виженер": `
+  Виженер: `
 def cipher_vigenere(message: str, keyword: str, is_ru: bool = True) -> str:
   """Реализация шифра Виженера для русского и английского языков.
 
@@ -29,7 +29,7 @@ def cipher_vigenere(message: str, keyword: str, is_ru: bool = True) -> str:
   return "".join([alphabet[(alphabet.index(message[i]) + alphabet.index(key[i])) % n] for i in range(len(message))])
   `,
 
-  "Вернам": `
+  Вернам: `
 def cipher_vernam(message: str, key: str, is_ru: bool = True) -> str:
   """Реализация шифра Вернама для русского и английского языков. 
   Шифр Виженера с использованием XOR.
@@ -50,7 +50,7 @@ def cipher_vernam(message: str, key: str, is_ru: bool = True) -> str:
   return "".join([alphabet[(alphabet.index(message[i]) ^ alphabet.index(final_key[i])) % n] for i in range(len(message))])
   `,
 
-  "Плейфер": `
+  Плейфер: `
 def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
   """Реализация шифра Плейфера для русского и английского языков.
   Матрица ключа создается из ключевого слова и алфавита.
@@ -71,23 +71,20 @@ def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
   letter = 'ъ' if is_ru else 'x'
 
   key = "".join(dict.fromkeys(keyword + alphabet))  # Убираем дубликаты из алфавита
-  matrix = [list(key[i:i+matrix_size]) for i in range(0, len(key), matrix_size)]  # Матрица для поисков
+  matrix = [list(key[i:i+matrix_size]) for i in range(0, len(key), matrix_size)]  # Матрица ключа
 
-  # Разбитие текста на биграммы
-  bigramm_message = [message[i:i+2] for i in range(0, len(message), 2)]
   prepare_message = []
-  temp = ""  # Если у биграммы одинаковые символы, то последний запоминаем для следующего элемента
-  for bigramm in bigramm_message:
-    if temp:
-      prepare_message.append(temp + bigramm[0])
-      temp = ""
-    elif len(bigramm) == 1:
-      prepare_message.append(bigramm + letter)
-    elif bigramm[0] == bigramm[1]:
-      prepare_message.append(bigramm[0] + letter)
-      temp = bigramm[1]
-    else:
-      prepare_message.append(bigramm)
+  i = 0
+  while i < len(message):
+      if i == len(message) - 1:  # Если остался один символ
+          prepare_message.append(message[i] + letter)
+          i += 1
+      elif message[i] == message[i + 1]:  # Если два символа одинаковые
+          prepare_message.append(message[i] + letter)
+          i += 1
+      else:  # Если символы разные
+          prepare_message.append(message[i:i + 2])
+          i += 2
 
   # Шифрование текста
   encrypted_message = []
@@ -98,10 +95,20 @@ def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
     if row_a == row_b:
       encrypted_message.append(matrix[row_a][(col_a + 1) % matrix_size] + matrix[row_b][(col_b + 1) % matrix_size])
     elif col_a == col_b:
-      encrypted_message.append(matrix[(row_a + 1) % matrix_size][col_a] + matrix[(row_b + 1) % matrix_size][col_b])
+      # Из-за неполной строки в матрице ключа у неполных колонок нужно добавлять +2, а не +1 для взятия следующего символа
+      if col_b != 0:
+        if row_a + 1 == len(matrix) - 1:
+          encrypted_message.append(matrix[(row_a + 2) % len(matrix)][col_a] + matrix[(row_b + 1) % len(matrix)][col_b])
+        elif row_b + 1 == len(matrix) - 1:
+          encrypted_message.append(matrix[(row_a + 1) % len(matrix)][col_a] + matrix[(row_b + 2) % len(matrix)][col_b])
+      else:
+        encrypted_message.append(matrix[(row_a + 1) % len(matrix)][col_a] + matrix[(row_b + 1) % len(matrix)][col_b])
     else:
+      # Условия т.к. для всего алфавита матрица ключа и есть последняя строка, которая состоит из 1 символа
       if len(matrix[row_a]) == 1:
         encrypted_message.append(matrix[0][col_b] + matrix[row_b][col_a])
+      elif len(matrix[row_b]) == 1:
+        encrypted_message.append(matrix[row_a][col_a] + matrix[0][col_b])
       else:
         encrypted_message.append(matrix[row_a][col_b] + matrix[row_b][col_a])
 
@@ -126,7 +133,7 @@ def _find_letter_position_in_matrix(matrix: list[list[str]], letter: str) -> tup
   return -1, -1
   `,
 
-  "Хилл": `
+  Хилл: `
 import numpy as np
 
 def cipher_hill(message: str, keyword: str, is_ru: bool = True) -> str:
@@ -154,7 +161,7 @@ def cipher_hill(message: str, keyword: str, is_ru: bool = True) -> str:
   return "".join([alphabet[i] for i in result_multiply_matrix[0]])
   `,
 
-  "Автоклав": `
+  Автоклав: `
 def cipher_autoclave(message: str, is_ru: bool = True) -> str:
   """Реализация автоклавного шифра для русского и английского языков.
   Шифрование происходит путем сложения двух соседних букв.
@@ -177,7 +184,7 @@ def cipher_autoclave(message: str, is_ru: bool = True) -> str:
   return "".join([alphabet[(alphabet.index(message[i]) + alphabet.index(key[i])) % n] for i in range(len(message))])
   `,
 
-  "Автоключ": `
+  Автоключ: `
 def cipher_autokey(message: str, keyword: str, is_ru: bool = True) -> str:
   """Реализация шифра с автоключом для русского и английского языков.
   Шифрование просиходит путем добавления ключа к сообщению.
@@ -205,7 +212,9 @@ const CiphersHWApp: React.FC = () => {
   const [key, setKey] = useState("");
   const [autokeyKeyword, setAutokeyKeyword] = useState<string | null>(null);
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>([]);
-  const [results, setResults] = useState<{ algorithm: string; result: string; matrix?: string[][] }[]>([]);
+  const [results, setResults] = useState<
+    { algorithm: string; result: string; matrix?: string[][] }[]
+  >([]);
 
   const algorithms = [
     { name: "Виженер", func: cipher_vigenere },
@@ -220,7 +229,7 @@ const CiphersHWApp: React.FC = () => {
     value: string,
     setter: React.Dispatch<React.SetStateAction<T>>
   ) => {
-    const cleanedValue = value.replace(/[^а-яА-Я]/g, "");
+    const cleanedValue = value.replace(/[^а-яА-Яё]/g, "");
     setter(cleanedValue as T);
   };
 
@@ -237,10 +246,14 @@ const CiphersHWApp: React.FC = () => {
       const algorithm = algorithms.find((alg) => alg.name === algorithmName);
       if (algorithm) {
         try {
+          // TODO: задеплоить LowerCase
           const result =
             algorithm.name === "Автоключ"
-              ? algorithm.func(message, autokeyKeyword || "привет")
-              : algorithm.func(message, key);
+              ? algorithm.func(
+                  message.toLowerCase(),
+                  autokeyKeyword!.toLowerCase() || "привет"
+                )
+              : algorithm.func(message.toLowerCase(), key.toLowerCase());
 
           // Добавляем матрицу для шифра Плейфера
           if (algorithm.name === "Плейфер") {
@@ -250,7 +263,10 @@ const CiphersHWApp: React.FC = () => {
 
           return { algorithm: algorithm.name, result };
         } catch (error) {
-          return { algorithm: algorithm.name, result: `Ошибка при шифровании\n${error}` };
+          return {
+            algorithm: algorithm.name,
+            result: `Ошибка при шифровании\n${error}`,
+          };
         }
       }
       return { algorithm: algorithmName, result: "Алгоритм не найден" };
@@ -258,12 +274,16 @@ const CiphersHWApp: React.FC = () => {
     setResults(calculatedResults);
   };
 
-    return (
+  return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 flex flex-col items-center p-6">
-      <h1 className="text-4xl font-extrabold mb-8 text-gray-800">Шифрование сообщений</h1>
+      <h1 className="text-4xl font-extrabold mb-8 text-gray-800">
+        Шифрование сообщений
+      </h1>
       <div className="w-full max-w-5xl bg-white shadow-lg rounded-xl p-8">
         <div className="mb-6">
-          <label className="block text-lg font-semibold text-gray-700 mb-2">Сообщение</label>
+          <label className="block text-lg font-semibold text-gray-700 mb-2">
+            Сообщение
+          </label>
           <input
             type="text"
             value={message}
@@ -273,7 +293,9 @@ const CiphersHWApp: React.FC = () => {
           />
         </div>
         <div className="mb-6">
-          <label className="block text-lg font-semibold text-gray-700 mb-2">Ключ</label>
+          <label className="block text-lg font-semibold text-gray-700 mb-2">
+            Ключ
+          </label>
           <input
             type="text"
             value={key}
@@ -284,18 +306,24 @@ const CiphersHWApp: React.FC = () => {
         </div>
         {selectedAlgorithms.includes("Автоключ") && (
           <div className="mb-6">
-            <label className="block text-lg font-semibold text-gray-700 mb-2">Ключевое слово для "Автоключ"</label>
+            <label className="block text-lg font-semibold text-gray-700 mb-2">
+              Ключевое слово для "Автоключ"
+            </label>
             <input
               type="text"
               value={autokeyKeyword || ""}
-              onChange={(e) => handleInputChange(e.target.value, setAutokeyKeyword)}
+              onChange={(e) =>
+                handleInputChange(e.target.value, setAutokeyKeyword)
+              }
               className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="привет"
             />
           </div>
         )}
         <div className="mb-8">
-          <p className="text-lg font-semibold text-gray-700 mb-4">Выберите алгоритмы шифрования:</p>
+          <p className="text-lg font-semibold text-gray-700 mb-4">
+            Выберите алгоритмы шифрования:
+          </p>
           <div className="grid grid-cols-2 gap-4">
             {algorithms.map((algorithm) => (
               <div key={algorithm.name} className="flex items-center">
@@ -306,7 +334,10 @@ const CiphersHWApp: React.FC = () => {
                   onChange={() => handleCheckboxChange(algorithm.name)}
                   className="w-5 h-5 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <label htmlFor={algorithm.name} className="ml-3 text-gray-700 font-medium">
+                <label
+                  htmlFor={algorithm.name}
+                  className="ml-3 text-gray-700 font-medium"
+                >
                   {algorithm.name}
                 </label>
               </div>
@@ -332,11 +363,22 @@ const CiphersHWApp: React.FC = () => {
                 key={index}
                 className="p-6 mb-6 bg-blue-50 border border-blue-200 rounded-lg shadow-sm"
               >
-                <p className="text-xl font-semibold text-gray-800 mb-4">{result.algorithm}</p>
-                <p className="text-gray-700 mb-4">{result.result}</p>
+                <p className="text-xl font-semibold text-gray-800 mb-4">
+                  {result.algorithm}
+                </p>
+                <p
+                  className="text-gray-700 mb-4 break-words whitespace-pre-wrap hover:cursor-pointer"
+                  onClick={() => {
+                    navigator.clipboard.writeText(result.result);
+                  }}
+                >
+                  {result.result}
+                </p>
                 {result.matrix && (
                   <div className="mt-4">
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Матрица ключа:</h3>
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">
+                      Матрица ключа:
+                    </h3>
                     <div className="overflow-x-auto">
                       <table className="border-collapse border border-gray-400 mx-auto">
                         <tbody>
@@ -360,12 +402,16 @@ const CiphersHWApp: React.FC = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-lg">Выберите алгоритмы и нажмите "Зашифровать".</p>
+            <p className="text-gray-500 text-lg">
+              Выберите алгоритмы и нажмите "Зашифровать".
+            </p>
           )}
         </div>
 
         <div className="mt-10">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Код на Python:</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            Код на Python:
+          </h2>
           {Object.entries(pythonCodeExamples).map(([algorithm, code]) => (
             <details key={algorithm} className="mb-4">
               <summary className="cursor-pointer text-lg font-semibold text-blue-600 hover:underline">
