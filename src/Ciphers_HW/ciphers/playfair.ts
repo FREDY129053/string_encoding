@@ -1,4 +1,4 @@
-export function cipher_playfair(message: string, keyword: string): string {
+export function cipher_playfair(message: string, keyword: string): [string, undefined] {
   const alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
   const matrix_cols = 8;
   const temp_letter = "ъ";
@@ -69,7 +69,7 @@ export function cipher_playfair(message: string, keyword: string): string {
     }
   }
 
-  return result;
+  return [result, undefined];
 }
 
 function findPosition(letter: string, matrix: string[][]): number[] {

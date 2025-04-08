@@ -214,7 +214,7 @@ const CiphersHWApp: React.FC = () => {
   const [autokeyKeyword, setAutokeyKeyword] = useState<string | null>(null);
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>([]);
   const [results, setResults] = useState<
-    { algorithm: string; result: string; matrix?: string[][] }[]
+    { algorithm: string; result: string; matrix?: string[][], keyForPrint?: string }[]
   >([]);
 
   const algorithms = [
@@ -247,7 +247,7 @@ const CiphersHWApp: React.FC = () => {
       const algorithm = algorithms.find((alg) => alg.name === algorithmName);
       if (algorithm) {
         try {
-          const result =
+          const [result, keyPrint] =
             algorithm.name === "Автоключ"
               ? algorithm.func(
                   message.toLowerCase(),
@@ -261,7 +261,7 @@ const CiphersHWApp: React.FC = () => {
             return { algorithm: algorithm.name, result, matrix };
           }
 
-          return { algorithm: algorithm.name, result };
+          return { algorithm: algorithm.name, result: result, keyForPrint: keyPrint };
         } catch (error) {
           return {
             algorithm: algorithm.name,
@@ -367,13 +367,23 @@ const CiphersHWApp: React.FC = () => {
                   {result.algorithm}
                 </p>
                 <p
-                  className="text-gray-700 mb-4 break-words whitespace-pre-wrap hover:cursor-pointer"
+                  className="text-gray-700 mb-8 break-words whitespace-pre-wrap hover:cursor-pointer"
                   onClick={() => {
                     navigator.clipboard.writeText(result.result);
                   }}
                 >
                   {result.result}
                 </p>
+                {result.keyForPrint && (
+                  <>
+                    <p className="text-md font-semibold text-gray-800 mb-4">
+                    Ключ шифрования:
+                    </p>
+                    <p className="text-gray-700 mb-4 break-words whitespace-pre-wrap">
+                      {result.keyForPrint}
+                    </p>
+                  </>
+                )}
                 {result.matrix && (
                   <div className="mt-4">
                     <h3 className="text-lg font-bold text-gray-800 mb-2">

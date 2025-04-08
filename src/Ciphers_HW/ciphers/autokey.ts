@@ -1,6 +1,9 @@
-export function cipher_autokey(message: string, key: string | null) : string {
+export function cipher_autokey(
+  message: string,
+  key: string | null
+): [string, string] {
   if (key === null) {
-    key = "привет"
+    key = "привет";
   }
 
   const alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
@@ -8,7 +11,7 @@ export function cipher_autokey(message: string, key: string | null) : string {
 
   const finalKey = (key + message).slice(0, message.length);
 
-  let result = '';
+  let result = "";
   for (let i = 0; i < message.length; i++) {
     const cipherChar =
       (alphabet.indexOf(message[i]) + alphabet.indexOf(finalKey[i])) %
@@ -16,5 +19,5 @@ export function cipher_autokey(message: string, key: string | null) : string {
     result += alphabet[cipherChar];
   }
 
-  return result
+  return [result, finalKey];
 }

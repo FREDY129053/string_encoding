@@ -1,4 +1,4 @@
-export function cipher_vernam(message: string, keyword: string): string {
+export function cipher_vernam(message: string, keyword: string): [string, string] {
   const alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
   const alphabetLength = alphabet.length;
   let key = "";
@@ -16,5 +16,5 @@ export function cipher_vernam(message: string, keyword: string): string {
     result += alphabet[cipherChar];
   }
 
-  return result;
+  return [result, key];
 }

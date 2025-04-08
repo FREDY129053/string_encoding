@@ -1,10 +1,15 @@
-export function cipher_hill(message: string, keyword: string): string {
+export function cipher_hill(
+  message: string,
+  keyword: string
+): [string, string] {
   const alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
   const alphabetLength = alphabet.length;
 
   const key: number[] = [];
+  let keyStringReturn: string = "";
   for (let i = 0; i < message.length ** 2; i++) {
     key.push(alphabet.indexOf(keyword[i % keyword.length]));
+    keyStringReturn += keyword[i % keyword.length];
   }
 
   const keyMatrix: number[][] = [];
@@ -31,7 +36,7 @@ export function cipher_hill(message: string, keyword: string): string {
     }
   }
 
-  return result;
+  return [result, keyStringReturn];
 }
 
 function multiplyMatrices(

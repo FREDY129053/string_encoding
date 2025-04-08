@@ -1,4 +1,4 @@
-export function cipher_autoclave(message: string) : string {
+export function cipher_autoclave(message: string) : [string, string] {
   const alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
   const alphabetLength = alphabet.length;
 
@@ -19,5 +19,5 @@ export function cipher_autoclave(message: string) : string {
     result += alphabet[cipherChar];
   }
   
-  return result;
+  return [result, key];
 }
