@@ -214,7 +214,13 @@ const CiphersHWApp: React.FC = () => {
   const [autokeyKeyword, setAutokeyKeyword] = useState<string | null>(null);
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>([]);
   const [results, setResults] = useState<
-    { algorithm: string; result: string; matrix?: string[][], keyForPrint?: string }[]
+    {
+      algorithm: string;
+      result: string;
+      matrix?: string[][];
+      keyForPrint?: string;
+      keyMatrix?: string[][];
+    }[]
   >([]);
 
   const algorithms = [
@@ -255,13 +261,31 @@ const CiphersHWApp: React.FC = () => {
                 )
               : algorithm.func(message.toLowerCase(), key.toLowerCase());
 
-          // Добавляем матрицу для шифра Плейфера
+          // Добавляем матрицу для шифра "Плейфер"
           if (algorithm.name === "Плейфер") {
             const matrix = get_matrix(key.toLocaleLowerCase());
             return { algorithm: algorithm.name, result, matrix };
           }
 
-          return { algorithm: algorithm.name, result: result, keyForPrint: keyPrint };
+          // Преобразуем ключ в матрицу для шифра "Хилл"
+          if (algorithm.name === "Хилл") {
+            const messageLength = message.length;
+            const keyMatrix = [];
+            for (let i = 0; i < messageLength; i++) {
+              keyMatrix.push(
+                keyPrint!
+                  .slice(i * messageLength, (i + 1) * messageLength)
+                  .split("")
+              );
+            }
+            return { algorithm: algorithm.name, result, keyMatrix };
+          }
+
+          return {
+            algorithm: algorithm.name,
+            result: result,
+            keyForPrint: keyPrint,
+          };
         } catch (error) {
           return {
             algorithm: algorithm.name,
@@ -374,25 +398,50 @@ const CiphersHWApp: React.FC = () => {
                 >
                   {result.result}
                 </p>
-                {result.keyForPrint && (
+                {result.keyForPrint && result.algorithm !== "Хилл" && (
                   <>
                     <p className="text-md font-semibold text-gray-800 mb-4">
-                    Ключ шифрования:
+                      Ключ шифрования:
                     </p>
                     <p className="text-gray-700 mb-4 break-words whitespace-pre-wrap">
                       {result.keyForPrint}
                     </p>
                   </>
                 )}
-                {result.matrix && (
+                {result.matrix && result.algorithm === "Плейфер" && (
                   <div className="mt-4">
                     <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      Матрица ключа:
+                      Матрица ключа (Плейфер):
                     </h3>
                     <div className="overflow-x-auto">
                       <table className="border-collapse border border-gray-400 mx-auto">
                         <tbody>
                           {result.matrix.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                              {row.map((cell, cellIndex) => (
+                                <td
+                                  key={cellIndex}
+                                  className="border border-gray-400 px-4 py-2 text-center font-mono text-lg"
+                                >
+                                  {cell}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+                {result.keyMatrix && result.algorithm === "Хилл" && (
+                  <div className="mt-4">
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">
+                      Матрица ключа (Хилл):
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="border-collapse border border-gray-400 mx-auto">
+                        <tbody>
+                          {result.keyMatrix.map((row, rowIndex) => (
                             <tr key={rowIndex}>
                               {row.map((cell, cellIndex) => (
                                 <td
