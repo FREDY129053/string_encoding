@@ -47,6 +47,10 @@ export function cipher_playfair(message: string, keyword: string): string {
           result +=
             matrix[(rowA + 1) % matrix.length][colA] +
             matrix[(rowB + 2) % matrix.length][colB];
+        } else {
+          result +=
+            matrix[(rowA + 1) % matrix.length][colA] +
+            matrix[(rowB + 1) % matrix.length][colB];
         }
       } else {
         result +=

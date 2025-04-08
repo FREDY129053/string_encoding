@@ -52,7 +52,7 @@ def cipher_vernam(message: str, key: str, is_ru: bool = True) -> str:
 
   Плейфер: `
 def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
-  """Реализация шифра Плейфера для русского и английского языков.
+  """Реализация шифра Плейфера для русского языка.
   Матрица ключа создается из ключевого слова и алфавита.
   Если в биграмме одинаковые буквы, то добавляется буква 'ъ' или 'x'.
   Если в биграмме одна буква, то добавляется буква 'ъ' или 'x'.
@@ -71,7 +71,7 @@ def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
   letter = 'ъ' if is_ru else 'x'
 
   key = "".join(dict.fromkeys(keyword + alphabet))  # Убираем дубликаты из алфавита
-  matrix = [list(key[i:i+matrix_size]) for i in range(0, len(key), matrix_size)]  # Матрица ключа
+  matrix = [list(key[i:i+matrix_size]) for i in range(0, len(key), matrix_size)]  # Матрица для поисков
 
   prepare_message = []
   i = 0
@@ -85,7 +85,7 @@ def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
       else:  # Если символы разные
           prepare_message.append(message[i:i + 2])
           i += 2
-
+          
   # Шифрование текста
   encrypted_message = []
   for a, b in prepare_message:
@@ -101,6 +101,8 @@ def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
           encrypted_message.append(matrix[(row_a + 2) % len(matrix)][col_a] + matrix[(row_b + 1) % len(matrix)][col_b])
         elif row_b + 1 == len(matrix) - 1:
           encrypted_message.append(matrix[(row_a + 1) % len(matrix)][col_a] + matrix[(row_b + 2) % len(matrix)][col_b])
+        else:
+          encrypted_message.append(matrix[(row_a + 1) % len(matrix)][col_a] + matrix[(row_b + 1) % len(matrix)][col_b])
       else:
         encrypted_message.append(matrix[(row_a + 1) % len(matrix)][col_a] + matrix[(row_b + 1) % len(matrix)][col_b])
     else:
@@ -111,7 +113,6 @@ def cipher_playfair(message: str, keyword: str, is_ru: bool = True) -> str:
         encrypted_message.append(matrix[row_a][col_a] + matrix[0][col_b])
       else:
         encrypted_message.append(matrix[row_a][col_b] + matrix[row_b][col_a])
-
   
   return "".join(encrypted_message)
 
